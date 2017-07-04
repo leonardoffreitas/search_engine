@@ -14,10 +14,13 @@ class CollectionReader():
     def read_file(self, file_name):
         with open(file_name) as fin:
             for line in fin:
+
+                # indexar
                 text = Normalizer().translate_html_entities(line)
                 text = Normalizer().normalize_html(text)
                 text = Normalizer().normalize_text(text)
                 if len(text) > 1: print(text)
+                # indexar
 
     def tracking_documents(self, directories=['docs']):
         for path in directories:
