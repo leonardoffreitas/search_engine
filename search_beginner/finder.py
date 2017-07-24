@@ -12,25 +12,28 @@ class Search(object):
         first_page = 0
         final_page = len(results)
         docs_per_page = 12
-
+        print(final_page, 'resultados encontrados para', query)
         for page_index in range(first_page, final_page, docs_per_page):
-            print('Resultados de %d, à %d\n' % (page_index+1, page_index + docs_per_page))
+            print('Resultados de %d à %d\n' % (page_index+1, page_index + docs_per_page))
             page = results[page_index : page_index + docs_per_page]
             for doc in page:
-                print(doc)
+                print('file: %s\t\t' % doc.split('/')[-1], '\t\tlink: file://%s' % doc)
             print()
             end_pagination = input('Próxima página: enter\nse não: exit\n')
             if end_pagination:
-                print('_'*100, '\n')
                 break
+        print('_'*100, '\n')
 
     def find(self, query_string):
         and_result = None
         terms = query_string.split()
         for term in terms:
             term = bytes(term.encode())
-            results = self.INDEX[term].decode('utf-8')
-            results = set(json.loads(results))
+            try:
+                results = self.INDEX[term].decode('utf-8')
+                results = set(json.loads(results))
+            except:
+                results = set()
             if and_result:
                 and_result = and_result.intersection(results)
             else:
@@ -47,7 +50,6 @@ class Search(object):
 
         query = input('buscar por: ')
         while query:
-            print('Exibindo resultados para: %s' % query)
             self.show_results(query)
             query = input('buscar por: ')
 

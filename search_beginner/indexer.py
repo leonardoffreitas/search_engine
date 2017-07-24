@@ -24,6 +24,7 @@ class CollectionReader():
     def tracking_documents(self, directories=['docs']):
         for path in directories:
             if is_file(path) and extension_file(path) in ACCEPTABLE_TEXT_FILES:
+                path = real_path(path)
                 self._indexer(*self._read_file(path))
             elif is_dir(path):
                 path = real_path(path)
