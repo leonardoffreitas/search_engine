@@ -3,9 +3,12 @@ from bsddb3 import db
 import json
 import sys
 
-class Search(object):
+class Search():
 
     INDEX = None
+
+    def __init__(self, links=False):
+        self.links = links
 
     def show_results(self, query):
         results = self.find(query)
@@ -17,7 +20,10 @@ class Search(object):
             print('Resultados de %d à %d\n' % (page_index+1, page_index + docs_per_page))
             page = results[page_index : page_index + docs_per_page]
             for doc in page:
-                print('file: %s\t\t' % doc.split('/')[-1], '\t\tlink: file://%s' % doc)
+                if self.links:
+                    print('file: %s\t\t' % doc.split('/')[-1], '\t\tlink: file://%s' % doc)
+                else:
+                    print('file: %s\t' % doc.split('/')[-1])
             print()
             end_pagination = input('Próxima página: enter\nse não: exit\n')
             if end_pagination:
@@ -53,5 +59,10 @@ class Search(object):
             self.show_results(query)
             query = input('buscar por: ')
 
-s = Search()
+import sys
+
+if len(sys.argv) == 2 and sys.argv[1] == '-v':
+    s = Search(links=True)
+else:
+    s = Search()
 s.execute()
