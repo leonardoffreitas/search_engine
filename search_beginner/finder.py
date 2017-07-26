@@ -1,5 +1,6 @@
 import json
 import sys
+import math
 
 class Search():
 
@@ -10,18 +11,20 @@ class Search():
 
     def show_results(self, query):
         results = self.find(query)
-        first_page = 0
-        final_page = len(results)
         docs_per_page = 12
+        first_page = 0
+        final_page = math.ceil(len(results) / docs_per_page)
         print(final_page, 'resultados encontrados para', query)
-        for page_index in range(first_page, final_page, docs_per_page):
-            print('Resultados de %d à %d\n' % (page_index+1, page_index + docs_per_page))
-            page = results[page_index : page_index + docs_per_page]
+        for page_index in range(first_page, final_page):
+            print('Página de %d de %d\n' % (page_index+1, final_page))
+            page = results[
+                page_index * docs_per_page :
+                (page_index+1) * docs_per_page]
             for doc in page:
                 if self.links:
-                    print('file: %s\t\t' % doc.split('/')[-1], '\t\tlink: file://%s' % doc)
+                    print('doc: %s\t\t' % doc.split('/')[-1], '\t\tlink: file://%s' % doc)
                 else:
-                    print('file: %s\t' % doc.split('/')[-1])
+                    print('doc: %s\t' % doc.split('/')[-1])
             print()
             end_pagination = input('Próxima página: enter\nse não: exit\n')
             if end_pagination:
@@ -59,10 +62,15 @@ class Search():
             self.show_results(query)
             query = input('buscar por: ')
 
+
 import sys
 
-if len(sys.argv) == 2 and sys.argv[1] == '-v':
-    s = Search(links=True)
-else:
-    s = Search()
-s.execute()
+def main():
+    if len(sys.argv) == 2 and sys.argv[1] == '-v':
+        s = Search(links=True)
+    else:
+        s = Search()
+    s.execute()
+
+if __name__ == '__main__':
+    main()
