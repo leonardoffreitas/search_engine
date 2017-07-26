@@ -1,7 +1,5 @@
 from utils.path_tools import *
 from utils.normalizer import Normalizer
-from contextlib import contextmanager
-from bsddb3 import db
 import json
 
 def extension_file(file_name=''):
@@ -10,7 +8,7 @@ def extension_file(file_name=''):
 class CollectionReader():
 
     ACCEPTABLE_TEXT_FILES = ['.txt', '.html']
-    INDEX = {}
+    INDEX = {}  # inverted index
 
     def _read_file(self, file_name):
         with open(file_name) as fin:
@@ -38,32 +36,34 @@ class CollectionReader():
                     self.tracking_documents(list_dir(path))
 
     def _indexer(self, id_doc, text):
+        '''Update inverted index'''
         for word in text.split():
             if word not in self.INDEX:
                 self.INDEX[word] = set()
             self.INDEX[word].add(id_doc)
 
     def save_index(self):
-        data = db.DB()
-        data.open('index/data.db', None, db.DB_HASH, db.DB_CREATE)
+        data = open('index/data.json', 'w')
         num_docs = 0
         for term in self.INDEX:
-            db_key = bytes(term.encode())
-            db_data = json.dumps(list(self.INDEX[term]))
-            data.put(
-                db_key,
-                db_data
-            )
+            index_key = term
+            index_data = list(self.INDEX[term])
+            payload = json.dumps({index_key: index_data})
+            print (payload, file=data)
             num_docs += 1
-            if num_docs % 1000 == 0:
+            if num_docs % 10000 == 0:
                 print(num_docs, 'documentos indexados')
         data.close()
         print(num_docs, 'documentos indexados no total')
 
     def execute(self):
+        print('Starting indexing')
         self.tracking_documents()
         self.save_index()
 
+def main():
+    cr = CollectionReader()
+    cr.execute()
 
-cr = CollectionReader()
-cr.execute()
+if __name__ == '__main__':
+    main()

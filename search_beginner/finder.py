@@ -1,5 +1,3 @@
-from bsddb3 import db
-
 import json
 import sys
 
@@ -34,10 +32,9 @@ class Search():
         and_result = None
         terms = query_string.split()
         for term in terms:
-            term = bytes(term.encode())
             try:
-                results = self.INDEX[term].decode('utf-8')
-                results = set(json.loads(results))
+                results = self.INDEX[term]
+                results = set(results)
             except:
                 results = set()
             if and_result:
@@ -47,8 +44,11 @@ class Search():
         return list(and_result)
 
     def load_index(self):
-        self.INDEX = db.DB()
-        self.INDEX.open('index/data.db', None, db.DB_HASH, db.DB_DIRTY_READ)
+        self.INDEX = {}
+        data = open('index/data.json')
+        for line in data:
+            register = json.loads(line)
+            self.INDEX.update(register)
 
     def execute(self):
 
