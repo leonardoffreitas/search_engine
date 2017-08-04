@@ -23,7 +23,7 @@ class Search():
                 query_vector,
                 doc_vector
             )
-            calculate_docs[doc + ' - similarity: ' + str(similarity)] = similarity
+            calculate_docs[doc] = similarity
         sorted_ranking = sorted(calculate_docs.items(), key=operator.itemgetter(1), reverse=True)
         return sorted_ranking
 
@@ -36,7 +36,7 @@ class Search():
         first_page = 0
         final_page = math.ceil(len(results) / docs_per_page)
 
-        print(final_page, 'resultados encontrados para', query)
+        print(len(results), 'resultados encontrados para', query)
 
         for page_index in range(first_page, final_page):
             print('Página de %d de %d\n' % (page_index+1, final_page))
@@ -47,9 +47,9 @@ class Search():
 
             for doc in page:
                 if self.links:
-                    print('doc: %s\t\t' % doc[0].split('/')[-1], '\t\tlink: file://%s' % doc[0])
+                    print('doc: %s - similarity: %f\t\t' % (doc[0].split('/')[-1], doc[1]), '\t\tlink: file://%s' % doc[0])
                 else:
-                    print('doc: %s\t' % doc[0].split('/')[-1])
+                    print('doc: %s - similarity: %f\t' % (doc[0].split('/')[-1], doc[1]))
 
             print()
 
