@@ -10,12 +10,12 @@ def extension_file(file_name=''):
 
 class CollectionReader():
 
-    ACCEPTABLE_TEXT_FILES = ['.txt']
+    ACCEPTABLE_TEXT_FILES = ['.html']
 
     INDEX = {}  # inverted index
     DOCS_VECTORS = {}  # vectors each doc
     VOCABULARY = {}  # all words exists in collection
-    COLLECTION = []
+    COLLECTION = []  # list of all documents
 
     def _read_file(self, file_name):
         with open(file_name) as fin:
