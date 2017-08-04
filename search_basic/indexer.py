@@ -17,12 +17,12 @@ class CollectionReader():
     VOCABULARY = {}  # all words exists in collection
     COLLECTION = []  # list of all documents
 
+    def _add_doc_to_collection(self, doc):
+        self.COLLECTION.append(doc)
+
     def _read_file(self, file_name):
         with open(file_name) as fin:
             return fin.read()
-
-    def _add_doc_to_collection(self, doc):
-        self.COLLECTION.append(doc)
 
     def _normalize_text(self, text):
         text = Normalizer().translate_html_entities(text)
@@ -90,17 +90,17 @@ class CollectionReader():
 
         collection_size = len(self.COLLECTION)
 
-        for term in self.INDEX:
-            index_key = bytes(term.encode())
+        for word in self.INDEX:
+            index_key = bytes(word.encode())
 
-            idf = round(math.log(collection_size / self.VOCABULARY[term]), 2)
+            idf = round(math.log(collection_size / self.VOCABULARY[word]), 2)
 
-            for doc in self.INDEX[term]:
+            for doc in self.INDEX[word]:
                 if doc not in self.DOCS_VECTORS:
                     self.DOCS_VECTORS[doc] = {}
-                self.DOCS_VECTORS[doc][term] = round(idf * self.INDEX[term][doc]['tf'], 2)
+                self.DOCS_VECTORS[doc][word] = round(idf * self.INDEX[word][doc]['tf'], 2)
 
-            index_data = json.dumps(self.INDEX[term])
+            index_data = json.dumps(self.INDEX[word])
             data.put(
                 index_key,
                 index_data

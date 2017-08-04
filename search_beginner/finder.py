@@ -18,25 +18,28 @@ class Search():
         for page_index in range(first_page, final_page):
             print('Página de %d de %d\n' % (page_index+1, final_page))
             page = results[
-                page_index * docs_per_page :
-                (page_index+1) * docs_per_page]
+                (page_index * docs_per_page) : ((page_index+1) * docs_per_page)
+            ]
+
             for doc in page:
                 if self.links:
                     print('doc: %s\t\t' % doc.split('/')[-1], '\t\tlink: file://%s' % doc)
                 else:
                     print('doc: %s\t' % doc.split('/')[-1])
             print()
+
             end_pagination = input('Próxima página: enter\nse não: exit\n')
             if end_pagination:
                 break
+
         print('_'*100, '\n')
 
     def find(self, query_string):
         and_result = None
-        terms = query_string.split()
-        for term in terms:
+        words = query_string.split()
+        for word in words:
             try:
-                results = self.INDEX[term]
+                results = self.INDEX[word]
                 results = set(results)
             except:
                 results = set()
