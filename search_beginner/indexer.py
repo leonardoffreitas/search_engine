@@ -7,7 +7,8 @@ def extension_file(file_name=''):
 
 class CollectionReader():
 
-    ACCEPTABLE_TEXT_FILES = ['.txt', '.html']
+    ACCEPTABLE_TEXT_FILES = ['.txt']
+   # ACCEPTABLE_TEXT_FILES = ['.txt', '.html']
     INDEX = {}  # inverted index
 
     def _read_file(self, file_name):
@@ -30,6 +31,9 @@ class CollectionReader():
                         self._read_file(doc)
                     )
                 )
+                self.num_docs += 1
+                if self.num_docs % 10000 == 0:
+                    print(self.num_docs, 'documentos indexados')
             elif is_dir(possible_doc):
                 path = real_path(possible_doc)
                 with working_directory(path):
@@ -44,22 +48,22 @@ class CollectionReader():
 
     def save_index(self):
         data = open('index/data.json', 'w')
-        num_docs = 0
+
         for term in self.INDEX:
             index_key = term
+
             index_data = list(self.INDEX[term])
             payload = json.dumps({index_key: index_data})
             print (payload, file=data)
-            num_docs += 1
-            if num_docs % 10000 == 0:
-                print(num_docs, 'documentos indexados')
+
         data.close()
-        print(num_docs, 'documentos indexados no total')
 
     def execute(self):
         print('Starting indexing')
+        self.num_docs = 0
         self.tracking_documents()
         self.save_index()
+        print(self.num_docs, 'documentos indexados no total')
 
 def main():
     cr = CollectionReader()
