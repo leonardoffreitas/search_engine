@@ -1,3 +1,4 @@
 *.swp
 */docs
 */index
+__pycache__
